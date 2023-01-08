@@ -1,25 +1,34 @@
 <template>
-    <div>
-        <div id="chartCPU"></div>
-    </div>
+  <div v-if="loading">
+    <loadingCard />
+  </div>
+  <div v-if="!loading">
+      <div id="chartCPU"></div>
+  </div>
 </template>
 
 <script>
 import * as d3 from 'd3';
+import loadingCard from '../Loading.vue'
 
 export default {
   name: 'GraficoDesempenhoCPU',
+  components: {
+    loadingCard
+  },
   data() {
   return {
     cpuInfo: {},
     utilizationCpuInfo: 0,
+    loading: true
   }
 },
 mounted() {
   const updateCpuInfo = () => {
     window.electronAPI.getCpu().then(response => {
-      this.cpuInfo = response.speedMax;
+      this.cpuInfo = response;
       this.utilizationCpuInfo = response.speedMax || 0;
+      this.loading = false
     });
 
     //setTimeout(updateCpuInfo, 5000);

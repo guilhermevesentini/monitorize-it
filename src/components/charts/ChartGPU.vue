@@ -1,25 +1,43 @@
 <template>
-    <div>
-        <div id="chartGPU"></div>
-    </div>
+  <div v-if="loading">
+    <loadingCard />
+  </div>
+  <div v-if="error">
+    <p>Ocorreu um erro ao tentar buscar as informações, por favor entre em contato com o suporte</p>
+  </div>
+  <div v-if="!loading">
+      <div id="chartGPU"></div>
+  </div>
 </template>
 
 <script>
 import * as d3 from 'd3';
+import loadingCard from '../Loading.vue'
 
 export default {
   name: 'GraficoDesempenhoGPU',
+  components: {
+    loadingCard
+  },
   data() {
   return {
     gpuInfo: {},
     utilizationGpuInfo: 0,
+    loading: true,
+    error : false
   }
 },
 mounted() {
   const updateGpuInfo = () => {
     window.electronAPI.getGpu().then(response => {
+      if(response == 'Timeout'){
+        this.gpuInfo = [];
+        this.error = true
+        return 
+      }  
       this.gpuInfo = response.controllers[0];
       this.utilizationGpuInfo = this.gpuInfo.utilizationGpu || 0;
+      this.loading = false;
     });
     //setTimeout(updateGpuInfo, 5000);
   }

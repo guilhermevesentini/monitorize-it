@@ -55,18 +55,27 @@ app.on('activate', () => {
 })
 
 const handleGetCpuInfo = async(event, query) =>{
+  si.system().then(data =>{
+    event.reply("os:system",data)
+  })
   si.cpu().then(data =>{
     event.reply("os:cpu",data)
   })
   si.graphics().then(data =>{
     event.reply("os:gpu",data)
   })  
+  si.mem().then(data =>{
+    event.reply("os:memoria",data)
+  })  
 }
 
 const registerIpcHandlers = () =>{
+  ipcMain.on('os:system', handleGetCpuInfo)
   ipcMain.on('os:cpu', handleGetCpuInfo)
   ipcMain.on('os:gpu', handleGetCpuInfo)
-}
+  ipcMain.on('os:memoria', handleGetCpuInfo)
+};
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
